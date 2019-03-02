@@ -27,24 +27,60 @@ func / (point: CGPoint, scalar: CGPoint) -> CGPoint {
 
 enum Tile: Int {
     
-    case Ground
-    case Wall
+    case Ground //0
+    case Wall_n //1
+    case Wall_ne //2
+    case Wall_e //3
+    case Wall_se //4
+    case Wall_s //5
+    case Wall_sw //6
+    case Wall_w //7
+    case Wall_nw //8
     
     var description:String {
         switch self {
         case .Ground:
             return "Ground"
-        case .Wall:
-            return "Wall"
+        case .Wall_n:
+            return "Wall North"
+        case .Wall_ne:
+            return "Wall North East"
+        case .Wall_e:
+            return "Wall East"
+        case .Wall_se:
+            return "Wall South East"
+        case .Wall_s:
+            return "Wall South"
+        case .Wall_sw:
+            return "Wall South West"
+        case .Wall_w:
+            return "Wall West"
+        case .Wall_nw:
+            return "Wall North West"
         }
     }
+
     
     var image:String {
         switch self {
         case .Ground:
             return "ground"
-        case .Wall:
-            return "wall"
+        case .Wall_n:
+            return "wall_n"
+        case .Wall_ne:
+            return "wall_ne"
+        case .Wall_e:
+            return "wall_e"
+        case .Wall_se:
+            return "wall_se"
+        case .Wall_s:
+            return "wall_s"
+        case .Wall_sw:
+            return "wall_sw"
+        case .Wall_w:
+            return "wall_w"
+        case .Wall_nw:
+            return "wall_nw"
             
         }
     }
@@ -60,12 +96,12 @@ class GameScene: SKScene {
     let viewIso:SKSpriteNode
     
     let tiles = [
-        [1, 1, 1, 1, 1, 1],
-        [1 ,0, 0, 0, 0, 1],
-        [1 ,0, 0, 0, 0, 1],
-        [1 ,0, 0, 0, 0, 1],
-        [1 ,0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1]
+        [8, 1, 1, 1, 1, 2],
+        [7 ,0, 0, 0, 0, 3],
+        [7 ,0, 0, 0, 0, 3],
+        [7 ,0, 0, 0, 0, 3],
+        [7 ,0, 0, 0, 0, 3],
+        [6, 5, 5, 5, 5, 4]
     ]
     let tileSize = (width:53, height:53)
     
@@ -152,7 +188,7 @@ class GameScene: SKScene {
                 
                 let point = point2DToIso(p: CGPoint(x: (j*tileSize.width), y: -(i*tileSize.height)))
                 
-                placeTileIso(image: ("iso_"+tile.image), withPosition:point)
+                placeTileIso(image: ("futuristic_"+tile.image), withPosition:point)
                 
             }
         }
