@@ -53,3 +53,77 @@ func textureImage(tile:Tile, direction:Direction, action:Action) -> String {
     }
     
 }
+
+protocol TextureObject {
+    static var sharedInstance: TextureDroid {get}
+    var texturesIso:[[SKTexture]?] {get}
+    var textures2D:[[SKTexture]?] {get}
+}
+
+private let textureDroid = TextureDroid()
+
+class TextureDroid: TextureObject  {
+    
+    class var sharedInstance: TextureDroid {
+        return textureDroid
+    }
+    
+    var texturesIso:[[SKTexture]?]
+    var textures2D:[[SKTexture]?]
+    
+    init() {
+        
+        texturesIso = [[SKTexture]?](repeating: nil, count: 2)
+        textures2D = [[SKTexture]?](repeating: nil, count: 2)
+        
+        //Idle
+        texturesIso[Action.Idle.rawValue] = [
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.N, action: Action.Idle)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.NE, action: Action.Idle)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.E, action: Action.Idle)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.SE, action: Action.Idle)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.S, action: Action.Idle)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.SW, action: Action.Idle)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.W, action: Action.Idle)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.NW, action: Action.Idle)),
+        ]
+        
+        //Move
+        texturesIso[Action.Move.rawValue] = [
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.N, action: Action.Move)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.NE, action: Action.Move)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.E, action: Action.Move)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.SE, action: Action.Move)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.S, action: Action.Move)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.SW, action: Action.Move)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.W, action: Action.Move)),
+            SKTexture(imageNamed: "futuristic_"+textureImage(tile: Tile.Droid, direction: Direction.NW, action: Action.Move)),
+        ]
+        
+        //Idle
+        textures2D[Action.Idle.rawValue] = [
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.N, action: Action.Idle)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.NE, action: Action.Idle)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.E, action: Action.Idle)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.SE, action: Action.Idle)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.S, action: Action.Idle)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.SW, action: Action.Idle)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.W, action: Action.Idle)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.NW, action: Action.Idle)),
+        ]
+        
+        //Move
+        textures2D[Action.Move.rawValue] = [
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.N, action: Action.Move)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.NE, action: Action.Move)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.E, action: Action.Move)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.SE, action: Action.Move)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.S, action: Action.Move)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.SW, action: Action.Move)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.W, action: Action.Move)),
+            SKTexture(imageNamed: textureImage(tile: Tile.Droid, direction: Direction.NW, action: Action.Move)),
+        ]
+        
+    }
+    
+}

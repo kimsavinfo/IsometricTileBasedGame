@@ -128,10 +128,37 @@ class GameScene: SKScene {
         var touchPos2D = pointIsoTo2D(p: touchLocation!)
         touchPos2D = touchPos2D + CGPoint(x:tileSize.width/2, y:-tileSize.height/2)
         let heroPos2D = touchPos2D + CGPoint(x:-tileSize.width/2, y:-tileSize.height/2)
-        hero.tileSprite2D.position = heroPos2D
+        
+        let deltaY = heroPos2D.y - hero.tileSprite2D.position.y
+        let deltaX = heroPos2D.x - hero.tileSprite2D.position.x
+        let degrees = atan2(deltaX, deltaY) * (180.0 / CGFloat(Double.pi))
+        hero.facing = degreesToDirection(degrees: degrees)
+        hero.update()
+        
+        let velocity = 100
+        let time = TimeInterval(distance(p1:heroPos2D, p2:hero.tileSprite2D.position)/CGFloat(velocity))
+        hero.tileSprite2D.removeAllActions()
+        hero.tileSprite2D.run(SKAction.move(to: heroPos2D, duration: time))
     }
     
     // MARK: Coordinate conversion
+    
+    func degreesToDirection(degrees:CGFloat) -> Direction {
+        var angle = degrees
+        if (angle < 0) {
+            angle += 360
+        }
+        
+        let directionRange = 45.0
+        angle += CGFloat(directionRange/2)
+        
+        var direction = Int(floor(Double(angle)/directionRange))
+        if (direction == 8) {
+            direction = 0
+        }
+        
+        return Direction(rawValue: direction)!
+    }
     
     func point2DToIso(p:CGPoint) -> CGPoint {
         //invert y pre conversion
