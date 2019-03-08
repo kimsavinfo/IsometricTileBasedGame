@@ -9,22 +9,6 @@
 import SpriteKit
 import GameplayKit
 
-func + (left: CGPoint, right: CGPoint) -> CGPoint {
-    return CGPoint(x: left.x + right.x, y: left.y + right.y)
-}
-
-func - (left: CGPoint, right: CGPoint) -> CGPoint {
-    return CGPoint(x: left.x - right.x, y: left.y - right.y)
-}
-
-func * (point: CGPoint, scalar: CGPoint) -> CGPoint {
-    return CGPoint(x: point.x * scalar.x, y: point.y * scalar.y)
-}
-
-func / (point: CGPoint, scalar: CGPoint) -> CGPoint {
-    return CGPoint(x: point.x / scalar.x, y: point.y / scalar.y)
-}
-
 class GameScene: SKScene {
     
     required init?(coder aDecoder: NSCoder) {
@@ -34,17 +18,16 @@ class GameScene: SKScene {
     let view2D:SKSpriteNode
     let viewIso:SKSpriteNode
     
-    let tiles = [
-        [8, 1, 1, 1, 1, 2],
-        [7 ,0, 0, 0, 0, 3],
-        [7 ,0, 11, 0, 0, 3],
-        [7 ,0, 0, 0, 0, 3],
-        [7 ,0, 0, 0, 0, 3],
-        [6, 5, 5, 5, 5, 4]
-    ]
+    var tiles:[[(Int, Int)]]
     let tileSize = (width:53, height:53)
     
     override init(size: CGSize) {
+        tiles =     [[(1,7), (1,0), (1,0), (1,0), (1,0), (1,1)]]
+        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (1,2)])
+        tiles.append([(1,6), (0,0), (2,2), (0,0), (0,0), (1,2)])
+        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (1,2)])
+        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (1,2)])
+        tiles.append([(1,5), (1,4), (1,4), (1,4), (1,4), (1,3)])
         
         view2D = SKSpriteNode()
         viewIso = SKSpriteNode()
@@ -71,9 +54,9 @@ class GameScene: SKScene {
         placeAllTilesIso()
     }
     
-    func placeTile2D(image:String, withPosition:CGPoint) {
-        let tileSprite = SKSpriteNode(imageNamed: image)
-        tileSprite.position = withPosition
+    func placeTile2D(tile:Tile, direction:Direction, position:CGPoint) {
+        let tileSprite = SKSpriteNode(imageNamed: textureImage(tile: tile, direction: direction, action: Action.Idle))
+        tileSprite.position = position
         tileSprite.anchorPoint = CGPoint(x:0, y:0)
         view2D.addChild(tileSprite)
     }
@@ -83,24 +66,24 @@ class GameScene: SKScene {
             let row = tiles[i];
             
             for j in 0..<row.count {
-                let tileInt = row[j]
-                let tile = Tile(rawValue: tileInt)!
+                let tile = Tile(rawValue: row[j].0)!
+                let direction = Direction(rawValue: row[j].1)!
                 let point = CGPoint(x: (j*tileSize.width), y: -(i*tileSize.height))
                 
-                if (tile == Tile.Droid_e) {
-                    placeTile2D(image: Tile.Ground.image, withPosition:point)
+                if (tile == Tile.Droid) {
+                    placeTile2D(tile:Tile.Ground, direction:direction, position:point)
                 }
                 
-                placeTile2D(image: tile.image, withPosition:point)
+                placeTile2D(tile:tile, direction:direction, position:point)
             }
             
         }
         
     }
     
-    func placeTileIso(image:String, withPosition:CGPoint) {
-        let tileSprite = SKSpriteNode(imageNamed: image)
-        tileSprite.position = withPosition
+    func placeTileIso(tile:Tile, direction:Direction, position:CGPoint) {
+        let tileSprite = SKSpriteNode(imageNamed: "futuristic_"+textureImage(tile: tile, direction: direction, action: Action.Idle))
+        tileSprite.position = position
         tileSprite.anchorPoint = CGPoint(x:0, y:0)
         viewIso.addChild(tileSprite)
     }
@@ -110,15 +93,15 @@ class GameScene: SKScene {
             let row = tiles[i];
             
             for j in 0..<row.count {
-                let tileInt = row[j]
-                let tile = Tile(rawValue: tileInt)!
+                let tile = Tile(rawValue: row[j].0)!
+                let direction = Direction(rawValue: row[j].1)!
                 let point = point2DToIso(p: CGPoint(x: (j*tileSize.width), y: -(i*tileSize.height)))
                 
-                if (tile == Tile.Droid_e) {
-                    placeTileIso(image: ("futuristic_"+Tile.Ground.image), withPosition:point)
+                if (tile == Tile.Droid) {
+                    placeTileIso(tile: Tile.Ground, direction:direction, position:point)
                 }
                 
-                placeTileIso(image: ("futuristic_"+tile.image), withPosition:point)
+                placeTileIso(tile: tile, direction:direction, position:point)
             }
         }
     }
