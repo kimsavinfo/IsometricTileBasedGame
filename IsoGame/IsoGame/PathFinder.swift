@@ -9,8 +9,8 @@
 import UIKit
 import SpriteKit
 
+// A* Pathfinding
 class PathFinder {
-    
     let moveCostHorizontalOrVertical = 10
     let moveCostDiagonal = 14
     
