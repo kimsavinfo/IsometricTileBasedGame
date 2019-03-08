@@ -20,6 +20,7 @@ class GameScene: SKScene {
     
     var tiles:[[(Int, Int)]]
     let tileSize = (width:53, height:53)
+    let hero = Droid()
     
     override init(size: CGSize) {
         tiles =     [[(1,7), (1,0), (1,0), (1,0), (1,0), (1,1)]]
@@ -56,6 +57,11 @@ class GameScene: SKScene {
     
     func placeTile2D(tile:Tile, direction:Direction, position:CGPoint) {
         let tileSprite = SKSpriteNode(imageNamed: textureImage(tile: tile, direction: direction, action: Action.Idle))
+        if (tile == hero.tile) {
+            hero.tileSprite2D = tileSprite
+            hero.tileSprite2D.zPosition = 1
+        }
+        
         tileSprite.position = position
         tileSprite.anchorPoint = CGPoint(x:0, y:0)
         view2D.addChild(tileSprite)
@@ -83,6 +89,10 @@ class GameScene: SKScene {
     
     func placeTileIso(tile:Tile, direction:Direction, position:CGPoint) {
         let tileSprite = SKSpriteNode(imageNamed: "futuristic_"+textureImage(tile: tile, direction: direction, action: Action.Idle))
+        if (tile == hero.tile) {
+            hero.tileSpriteIso = tileSprite
+        }
+        
         tileSprite.position = position
         tileSprite.anchorPoint = CGPoint(x:0, y:0)
         viewIso.addChild(tileSprite)
@@ -104,6 +114,21 @@ class GameScene: SKScene {
                 placeTileIso(tile: tile, direction:direction, position:point)
             }
         }
+    }
+    
+    // MARK: Update and touch functions
+    
+    override func update(_ currentTime: CFTimeInterval) {
+        hero.tileSpriteIso.position = point2DToIso(p: hero.tileSprite2D.position)
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touch = touches.first
+        let touchLocation = touch?.location(in: viewIso)
+        var touchPos2D = pointIsoTo2D(p: touchLocation!)
+        touchPos2D = touchPos2D + CGPoint(x:tileSize.width/2, y:-tileSize.height/2)
+        let heroPos2D = touchPos2D + CGPoint(x:-tileSize.width/2, y:-tileSize.height/2)
+        hero.tileSprite2D.position = heroPos2D
     }
     
     // MARK: Coordinate conversion
