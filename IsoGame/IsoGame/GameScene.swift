@@ -17,21 +17,28 @@ class GameScene: SKScene {
     
     let view2D:SKSpriteNode
     let viewIso:SKSpriteNode
+    let layerIsoGround:SKNode
+    let layerIsoObjects:SKNode
     
     var tiles:[[(Int, Int)]]
     let tileSize = (width:53, height:53)
     let hero = Droid()
+    let nthFrame = 6
+    var nthFrameCount = 0
     
     override init(size: CGSize) {
-        tiles =     [[(1,7), (1,0), (1,0), (1,0), (1,0), (1,1)]]
-        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (1,2)])
-        tiles.append([(1,6), (0,0), (2,2), (0,0), (0,0), (1,2)])
-        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (1,2)])
-        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (1,2)])
-        tiles.append([(1,5), (1,4), (1,4), (1,4), (1,4), (1,3)])
+        tiles =     [[(1,7), (1,0), (1,0), (1,0), (1,0), (1,0), (1,1)]]
+        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (0,0), (1,2)])
+        tiles.append([(1,6), (0,0), (2,2), (0,0), (0,0), (0,0), (1,2)])
+        tiles.append([(1,6), (0,0), (0,0), (1,5), (1,4), (1,4), (1,3)])
+        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (0,0), (0,0)])
+        tiles.append([(1,6), (0,0), (0,0), (0,0), (0,0), (0,0), (0,0)])
+        tiles.append([(1,5), (1,4), (1,4), (1,4), (1,4), (1,4), (1,3)])
         
         view2D = SKSpriteNode()
         viewIso = SKSpriteNode()
+        layerIsoGround = SKNode()
+        layerIsoObjects = SKNode()
         
         super.init(size: size)
         self.anchorPoint = CGPoint(x:0.5, y:0.5)
@@ -50,6 +57,9 @@ class GameScene: SKScene {
         viewIso.xScale = deviceScale
         viewIso.yScale = deviceScale
         addChild(viewIso)
+        
+        viewIso.addChild(layerIsoGround)
+        viewIso.addChild(layerIsoObjects)
         
         placeAllTiles2D()
         placeAllTilesIso()
@@ -95,7 +105,11 @@ class GameScene: SKScene {
         
         tileSprite.position = position
         tileSprite.anchorPoint = CGPoint(x:0, y:0)
-        viewIso.addChild(tileSprite)
+        if (tile == Tile.Ground) {
+            layerIsoGround.addChild(tileSprite)
+        } else if (tile == Tile.Wall || tile == Tile.Droid) {
+            layerIsoObjects.addChild(tileSprite)
+        }
     }
     
     func placeAllTilesIso() {
@@ -120,6 +134,16 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: CFTimeInterval) {
         hero.tileSpriteIso.position = point2DToIso(p: hero.tileSprite2D.position)
+        
+        nthFrameCount += 1
+        if (nthFrameCount == nthFrame) {
+            nthFrameCount = 0
+            updateOnNthFrame()
+        }
+    }
+    
+    func updateOnNthFrame() {
+        sortDepth()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -142,6 +166,27 @@ class GameScene: SKScene {
     }
     
     // MARK: Coordinate conversion
+    
+    func sortDepth() {
+        let childrenSortedForDepth = layerIsoObjects.children.sorted() {
+            
+            let p0 = self.pointIsoTo2D(p: $0.position)
+            let p1 = self.pointIsoTo2D(p: $1.position)
+            
+            if ((p0.x+(-p0.y)) > (p1.x+(-p1.y))) {
+                return false
+            } else {
+                return true
+            }
+            
+        }
+        
+        for i in 0..<childrenSortedForDepth.count {
+            let node = (childrenSortedForDepth[i] )
+            node.zPosition = CGFloat(i)
+            
+        }
+    }
     
     func degreesToDirection(degrees:CGFloat) -> Direction {
         var angle = degrees
