@@ -25,67 +25,6 @@ func / (point: CGPoint, scalar: CGPoint) -> CGPoint {
     return CGPoint(x: point.x / scalar.x, y: point.y / scalar.y)
 }
 
-enum Tile: Int {
-    
-    case Ground //0
-    case Wall_n //1
-    case Wall_ne //2
-    case Wall_e //3
-    case Wall_se //4
-    case Wall_s //5
-    case Wall_sw //6
-    case Wall_w //7
-    case Wall_nw //8
-    
-    var description:String {
-        switch self {
-        case .Ground:
-            return "Ground"
-        case .Wall_n:
-            return "Wall North"
-        case .Wall_ne:
-            return "Wall North East"
-        case .Wall_e:
-            return "Wall East"
-        case .Wall_se:
-            return "Wall South East"
-        case .Wall_s:
-            return "Wall South"
-        case .Wall_sw:
-            return "Wall South West"
-        case .Wall_w:
-            return "Wall West"
-        case .Wall_nw:
-            return "Wall North West"
-        }
-    }
-
-    
-    var image:String {
-        switch self {
-        case .Ground:
-            return "ground"
-        case .Wall_n:
-            return "wall_n"
-        case .Wall_ne:
-            return "wall_ne"
-        case .Wall_e:
-            return "wall_e"
-        case .Wall_se:
-            return "wall_se"
-        case .Wall_s:
-            return "wall_s"
-        case .Wall_sw:
-            return "wall_sw"
-        case .Wall_w:
-            return "wall_w"
-        case .Wall_nw:
-            return "wall_nw"
-            
-        }
-    }
-}
-
 class GameScene: SKScene {
     
     required init?(coder aDecoder: NSCoder) {
@@ -98,7 +37,7 @@ class GameScene: SKScene {
     let tiles = [
         [8, 1, 1, 1, 1, 2],
         [7 ,0, 0, 0, 0, 3],
-        [7 ,0, 0, 0, 0, 3],
+        [7 ,0, 11, 0, 0, 3],
         [7 ,0, 0, 0, 0, 3],
         [7 ,0, 0, 0, 0, 3],
         [6, 5, 5, 5, 5, 4]
@@ -133,29 +72,24 @@ class GameScene: SKScene {
     }
     
     func placeTile2D(image:String, withPosition:CGPoint) {
-        
         let tileSprite = SKSpriteNode(imageNamed: image)
-        
         tileSprite.position = withPosition
-        
         tileSprite.anchorPoint = CGPoint(x:0, y:0)
-        
         view2D.addChild(tileSprite)
-        
     }
     
     func placeAllTiles2D() {
-        
         for i in 0..<tiles.count {
-            
             let row = tiles[i];
             
             for j in 0..<row.count {
                 let tileInt = row[j]
-                
                 let tile = Tile(rawValue: tileInt)!
-                
                 let point = CGPoint(x: (j*tileSize.width), y: -(i*tileSize.height))
+                
+                if (tile == Tile.Droid_e) {
+                    placeTile2D(image: Tile.Ground.image, withPosition:point)
+                }
                 
                 placeTile2D(image: tile.image, withPosition:point)
             }
@@ -165,31 +99,26 @@ class GameScene: SKScene {
     }
     
     func placeTileIso(image:String, withPosition:CGPoint) {
-        
         let tileSprite = SKSpriteNode(imageNamed: image)
-        
         tileSprite.position = withPosition
-        
         tileSprite.anchorPoint = CGPoint(x:0, y:0)
-        
         viewIso.addChild(tileSprite)
     }
     
     func placeAllTilesIso() {
-        
         for i in 0..<tiles.count {
-            
             let row = tiles[i];
             
             for j in 0..<row.count {
                 let tileInt = row[j]
-                
                 let tile = Tile(rawValue: tileInt)!
-                
                 let point = point2DToIso(p: CGPoint(x: (j*tileSize.width), y: -(i*tileSize.height)))
                 
-                placeTileIso(image: ("futuristic_"+tile.image), withPosition:point)
+                if (tile == Tile.Droid_e) {
+                    placeTileIso(image: ("futuristic_"+Tile.Ground.image), withPosition:point)
+                }
                 
+                placeTileIso(image: ("futuristic_"+tile.image), withPosition:point)
             }
         }
     }
@@ -197,7 +126,6 @@ class GameScene: SKScene {
     // MARK: Coordinate conversion
     
     func point2DToIso(p:CGPoint) -> CGPoint {
-        
         //invert y pre conversion
         var point = p * CGPoint(x:1, y:-1)
         
@@ -208,11 +136,9 @@ class GameScene: SKScene {
         point = point * CGPoint(x:1, y:-1)
         
         return point
-        
     }
     
     func pointIsoTo2D(p:CGPoint) -> CGPoint {
-        
         //invert y pre conversion
         var point = p * CGPoint(x:1, y:-1)
         
@@ -223,6 +149,5 @@ class GameScene: SKScene {
         point = point * CGPoint(x:1, y:-1)
         
         return point
-        
     }
 }
